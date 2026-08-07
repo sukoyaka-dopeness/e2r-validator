@@ -1,0 +1,24 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: e2r-validator
+      - uses: actions/checkout@v4
+        with:
+          repository: sukoyaka-dopeness/e2r-spec
+          path: e2r-spec
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+        working-directory: e2r-validator
+      - run: npm run validate
+        working-directory: e2r-validator

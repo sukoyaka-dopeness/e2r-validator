@@ -1,0 +1,22 @@
+{
+  "name": "e2r-validator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Validator for E2R Datasets.",
+  "type": "module",
+  "bin": {
+    "e2r-validator": "src/cli.js"
+  },
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "lint": "node --check src/cli.js",
+    "validate:fixtures": "node --test test/spec-fixtures.test.js",
+    "validate": "npm run lint && npm test && npm run validate:fixtures"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
