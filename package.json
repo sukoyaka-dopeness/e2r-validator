@@ -1,6 +1,6 @@
 {
   "name": "@sukoyaka-dopeness/e2r-validator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Validator for E2R Datasets.",
   "type": "module",
   "bin": {
