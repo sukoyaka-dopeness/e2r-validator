@@ -8,14 +8,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           path: e2r-validator
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: sukoyaka-dopeness/e2r-spec
           path: e2r-spec
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
       - run: npm install
