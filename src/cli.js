@@ -13,7 +13,8 @@ if (filePath === "--help" || filePath === "-h") {
 }
 
 if (filePath === "--version" || filePath === "-v") {
-  console.log("e2r-validator 0.1.0");
+  const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
+  console.log(`e2r-validator ${packageJson.version}`);
   process.exit(EXIT_CODES.VALID);
 }
 

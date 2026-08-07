@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -18,6 +19,7 @@ test("supports help and version options", async () => {
   assert.equal(help.code, 0);
   assert.match(help.output, /Usage:/);
   const version = await run("--version");
+  const packageJson = JSON.parse(await readFile(join(process.cwd(), "package.json"), "utf8"));
   assert.equal(version.code, 0);
-  assert.match(version.output, /e2r-validator 0\.1\.0/);
+  assert.equal(version.output.trim(), `e2r-validator ${packageJson.version}`);
 });
