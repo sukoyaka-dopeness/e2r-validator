@@ -1,7 +1,6 @@
 {
-  "name": "e2r-validator",
+  "name": "@sukoyaka-dopeness/e2r-validator",
   "version": "0.1.0",
-  "private": true,
   "description": "Validator for E2R Datasets.",
   "type": "module",
   "bin": {
@@ -10,6 +9,11 @@
   "exports": {
     ".": "./src/index.js"
   },
+  "files": [
+    "src",
+    "docs",
+    "README.md"
+  ],
   "scripts": {
     "test": "node --test",
     "lint": "node --check src/cli.js",

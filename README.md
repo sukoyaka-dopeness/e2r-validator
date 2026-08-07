@@ -42,7 +42,7 @@ The fixture suite reads examples from the sibling `e2r-spec` repository.
 The same validator is available as a library:
 
 ```js
-import { validateDataset } from "e2r-validator";
+import { validateDataset } from "@sukoyaka-dopeness/e2r-validator";
 
 const result = validateDataset(dataset);
 ```
