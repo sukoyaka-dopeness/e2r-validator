@@ -15,6 +15,20 @@ Implemented:
 - automated validation of the sibling `e2r-spec` examples and invalid fixtures
 - GitHub Actions verification on pushes and pull requests
 
+## Published status
+
+Version `0.1.3` is publicly published as
+`@sukoyaka-dopeness/e2r-validator@0.1.3`.
+
+The package was published from tag `v0.1.3` by the tag-controlled GitHub
+Actions release workflow using npm Trusted Publishing. The release process
+also verifies the package version, the matching CHANGELOG entry, the complete
+test and fixture suite, and the package contents before publishing.
+
+Post-release verification confirmed that the published package can be
+installed in a clean temporary directory, reports `e2r-validator 0.1.3`, and
+validates the committed E2R specification examples.
+
 Outside this MVP:
 
 - full IANA Time Zone database resolution

@@ -39,6 +39,10 @@ jobs:
         run: |
           node -e "const tag = process.env.GITHUB_REF_NAME; const version = require('./package.json').version; if (!/^v\d+\.\d+\.\d+$/.test(tag)) throw new Error('Release tag must use the stable SemVer form vMAJOR.MINOR.PATCH.'); if (tag.slice(1) !== version) throw new Error('Release tag ' + tag + ' does not match package version ' + version + '.');"
         working-directory: e2r-validator
+      - name: Verify changelog entry
+        run: |
+          node -e "const fs = require('node:fs'); const version = require('./package.json').version; const changelog = fs.readFileSync('CHANGELOG.md', 'utf8'); const heading = '## ' + version; if (!changelog.split(/\r?\n/).some(line => line === heading || line.startsWith(heading + ' '))) throw new Error('CHANGELOG.md has no heading for version ' + version + '.');"
+        working-directory: e2r-validator
       - name: Inspect package contents
         run: npm pack --dry-run
         working-directory: e2r-validator

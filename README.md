@@ -57,3 +57,6 @@ The validator does not edit or repair input Datasets.
 
 The diagnostic contract is defined in `docs/diagnostic-contract.md`.
 Core, Metadata, and History validation are implemented for the initial MVP.
+
+See [`docs/release-process.md`](docs/release-process.md) for the tag-based
+npm publication process and [`CHANGELOG.md`](CHANGELOG.md) for release notes.
