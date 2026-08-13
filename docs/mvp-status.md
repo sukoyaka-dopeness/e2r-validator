@@ -2,6 +2,13 @@
 
 The initial CLI Validator MVP is complete for its defined scope.
 
+Post-MVP development now includes Specification Extension draft `0.1.0`
+interoperability diagnostics and Coordinate interoperability prototype `0.1.0`
+diagnostics. Read-only Coordinate Extension draft `0.1.0` diagnostics are also
+implemented under the distinct Draft identifier. This work remains unreleased
+and does not make any candidate Extension Stable or authorize application
+migration.
+
 Implemented:
 
 - Core Dataset structure and Dataset-level semantic validation

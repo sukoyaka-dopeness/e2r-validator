@@ -1,41 +1,119 @@
 import { diagnostic, SEVERITIES } from "./diagnostics.js";
+import {
+  COORDINATE_EXTENSION_ID,
+  validateCoordinateExtension,
+} from "./coordinate-validator.js";
+import {
+  COORDINATE_DRAFT_EXTENSION_ID,
+  validateCoordinateDraftExtension,
+} from "./coordinate-draft-validator.js";
+import {
+  isLocallySupportedSpecification,
+  SPECIFICATION_EXTENSION_ID,
+  validateSpecificationExtension,
+} from "./specification-validator.js";
 
-const recognized = new Set(["metadata", "history"]);
+const recognized = new Set([
+  "metadata",
+  "history",
+  COORDINATE_EXTENSION_ID,
+  COORDINATE_DRAFT_EXTENSION_ID,
+  SPECIFICATION_EXTENSION_ID,
+]);
 const nonEmpty = (value) => typeof value === "string" && value.trim().length > 0;
+const isObject = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+
+function pointerSegment(value) {
+  return String(value).replaceAll("~", "~0").replaceAll("/", "~1");
+}
+
+function extensionContainers(dataset) {
+  const containers = [{ owner: dataset, path: "" }];
+  for (const collection of ["entities", "events", "relations"]) {
+    if (!Array.isArray(dataset[collection])) continue;
+    for (const [index, value] of dataset[collection].entries()) {
+      if (isObject(value)) containers.push({ owner: value, path: `/${collection}/${index}` });
+    }
+  }
+  return containers;
+}
 
 export function validateExtensions(dataset) {
   const diagnostics = [];
-  if (!("extensions" in dataset)) return diagnostics;
-  if (typeof dataset.extensions !== "object" || dataset.extensions === null || Array.isArray(dataset.extensions)) {
-    diagnostics.push(diagnostic(SEVERITIES.ERROR, "extensions_invalid", "/extensions"));
-    return diagnostics;
-  }
-  for (const name of Object.keys(dataset.extensions)) {
-    const value = dataset.extensions[name];
-    if (!recognized.has(name)) {
-      diagnostics.push(diagnostic(SEVERITIES.WARNING, "unknown_extension", `/extensions/${name.replaceAll("~", "~0").replaceAll("/", "~1")}`));
+  const occurrences = new Map();
+  let specificationPayload;
+  let specificationPath = `/extensions/${pointerSegment(SPECIFICATION_EXTENSION_ID)}`;
+
+  for (const container of extensionContainers(dataset)) {
+    if (!("extensions" in container.owner)) continue;
+    const extensionsPath = `${container.path}/extensions`;
+    const extensions = container.owner.extensions;
+    if (!isObject(extensions)) {
+      diagnostics.push(diagnostic(SEVERITIES.ERROR, "extensions_invalid", extensionsPath));
       continue;
     }
-    if (name === "metadata") validateMetadata(value, diagnostics);
-    if (name === "history") validateHistory(value, diagnostics);
+
+    for (const [name, value] of Object.entries(extensions)) {
+      const valuePath = `${extensionsPath}/${pointerSegment(name)}`;
+      if (!occurrences.has(name)) occurrences.set(name, []);
+      occurrences.get(name).push({ value, path: valuePath });
+
+      if (!recognized.has(name)) {
+        diagnostics.push(diagnostic(SEVERITIES.WARNING, "unknown_extension", valuePath));
+        continue;
+      }
+      if (name === SPECIFICATION_EXTENSION_ID) {
+        if (container.path !== "") {
+          diagnostics.push(diagnostic(SEVERITIES.ERROR, "specification_scope_invalid", valuePath));
+        } else {
+          specificationPayload = value;
+          specificationPath = valuePath;
+        }
+      }
+    }
+  }
+
+  const specification = validateSpecificationExtension(specificationPayload, specificationPath, occurrences);
+  diagnostics.push(...specification.diagnostics);
+
+  for (const [name, validator] of [["metadata", validateMetadata], ["history", validateHistory]]) {
+    const declaration = specification.declarations.get(name);
+    if (declaration && !isLocallySupportedSpecification(name, declaration.version)) continue;
+    for (const occurrence of occurrences.get(name) ?? []) {
+      validator(occurrence.value, occurrence.path, diagnostics);
+    }
+  }
+  const coordinateOccurrences = occurrences.get(COORDINATE_EXTENSION_ID) ?? [];
+  if (coordinateOccurrences.length > 0) {
+    diagnostics.push(...validateCoordinateExtension(
+      coordinateOccurrences,
+      specification.declarations.get(COORDINATE_EXTENSION_ID),
+    ));
+  }
+  const coordinateDraftOccurrences = occurrences.get(COORDINATE_DRAFT_EXTENSION_ID) ?? [];
+  if (coordinateDraftOccurrences.length > 0) {
+    diagnostics.push(...validateCoordinateDraftExtension(
+      coordinateDraftOccurrences,
+      specification.supported ? specificationPayload : undefined,
+      specificationPath,
+    ));
   }
   return diagnostics;
 }
 
-function validateMetadata(value, diagnostics) {
+function validateMetadata(value, base, diagnostics) {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    diagnostics.push(diagnostic(SEVERITIES.ERROR, "metadata_invalid", "/extensions/metadata"));
+    diagnostics.push(diagnostic(SEVERITIES.ERROR, "metadata_invalid", base));
     return;
   }
   for (const field of ["datasetId", "title"]) {
     if (field in value && !nonEmpty(value[field])) {
-      diagnostics.push(diagnostic(SEVERITIES.ERROR, `metadata_${field}_invalid`, `/extensions/metadata/${field}`));
+      diagnostics.push(diagnostic(SEVERITIES.ERROR, `metadata_${field}_invalid`, `${base}/${field}`));
     }
   }
 }
 
-function validateHistory(value, diagnostics) {
-  const base = "/extensions/history";
+function validateHistory(value, base, diagnostics) {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     diagnostics.push(diagnostic(SEVERITIES.ERROR, "history_invalid", base));
     return;

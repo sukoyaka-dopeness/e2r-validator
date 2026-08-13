@@ -82,6 +82,151 @@ area, for example `metadata_dataset_id_invalid` or
 `history_time_invalid`. Codes are never reused for a different condition.
 Retiring a code requires a documented migration note.
 
+Specification Extension draft `0.1.0` support-state codes:
+
+```text
+extension_version_unspecified
+specification_version_unsupported
+specification_unavailable
+specification_required_dependency_unsupported
+```
+
+Specification declaration and dependency conformance codes:
+
+```text
+specification_scope_invalid
+specification_invalid
+specification_spec_version_missing
+specification_spec_version_invalid
+specification_uses_invalid
+specification_use_invalid
+specification_extension_invalid
+specification_version_invalid
+specification_features_invalid
+specification_feature_invalid
+specification_feature_duplicate
+specification_features_not_defined
+specification_self_declaration
+specification_declaration_duplicate
+specification_declaration_missing
+specification_declared_payload_missing
+specification_required_dependency_missing
+specification_required_dependency_version_mismatch
+```
+
+Specification definition, lifecycle, and evolution structure codes:
+
+```text
+specification_definitions_invalid
+specification_definition_invalid
+specification_definition_duplicate
+specification_definition_features_invalid
+specification_definition_feature_invalid
+specification_definition_feature_duplicate
+specification_field_invalid
+specification_documentation_invalid
+specification_dependencies_invalid
+specification_dependency_invalid
+specification_dependency_target_invalid
+specification_dependency_constraint_invalid
+specification_dependency_source_feature_unknown
+specification_dependency_target_feature_unknown
+specification_reference_invalid
+specification_lifecycle_invalid
+specification_lifecycle_status_invalid
+specification_deprecated_by_invalid
+specification_evolution_invalid
+specification_evolution_type_invalid
+specification_evolution_targets_invalid
+specification_evolution_target_duplicate
+```
+
+Coordinate interoperability prototype `0.1.0` codes:
+
+```text
+coordinate_dataset_payload_missing
+coordinate_dataset_payload_invalid
+coordinate_format_version_missing
+coordinate_format_version_invalid
+coordinate_version_declaration_conflict
+coordinate_spaces_invalid
+coordinate_space_invalid
+coordinate_space_id_invalid
+coordinate_space_id_duplicate
+coordinate_space_field_invalid
+coordinate_components_invalid
+coordinate_component_id_invalid
+coordinate_component_invalid
+coordinate_component_field_invalid
+coordinate_component_range_invalid
+coordinate_component_period_invalid
+coordinate_external_reference_invalid
+coordinate_scope_invalid
+coordinate_object_payload_invalid
+coordinate_coordinates_invalid
+coordinate_invalid
+coordinate_space_reference_invalid
+coordinate_space_coordinate_duplicate
+coordinate_space_unresolved
+coordinate_values_invalid
+coordinate_component_unresolved
+coordinate_value_invalid
+coordinate_value_out_of_range
+```
+
+These codes are errors in the recognized experimental Coordinate layer, not
+Core structural errors. `coordinate_version_unsupported` is a warning. A
+combined result containing a Coordinate error has `valid: false`; the code
+namespace preserves which validation layer failed.
+
+Coordinate Extension draft `0.1.0` codes:
+
+```text
+coordinate_draft_dataset_payload_missing
+coordinate_draft_dataset_payload_invalid
+coordinate_draft_spec_version_missing
+coordinate_draft_spec_version_invalid
+coordinate_draft_version_declaration_missing
+coordinate_draft_version_declaration_duplicate
+coordinate_draft_version_declaration_conflict
+coordinate_draft_prototype_version_field_prohibited
+coordinate_draft_spaces_invalid
+coordinate_draft_space_invalid
+coordinate_draft_space_id_invalid
+coordinate_draft_space_id_duplicate
+coordinate_draft_space_field_invalid
+coordinate_draft_components_invalid
+coordinate_draft_component_id_invalid
+coordinate_draft_component_invalid
+coordinate_draft_component_field_invalid
+coordinate_draft_component_bounds_inverted
+coordinate_draft_component_period_invalid
+coordinate_draft_external_reference_invalid
+coordinate_draft_external_component_without_reference
+coordinate_draft_external_component_duplicate
+coordinate_draft_scope_invalid
+coordinate_draft_object_payload_invalid
+coordinate_draft_object_version_field_prohibited
+coordinate_draft_coordinates_invalid
+coordinate_draft_coordinate_invalid
+coordinate_draft_space_reference_invalid
+coordinate_draft_object_space_duplicate
+coordinate_draft_space_unresolved
+coordinate_draft_values_invalid
+coordinate_draft_component_unresolved
+coordinate_draft_value_invalid
+coordinate_draft_value_out_of_range
+```
+
+These are errors in the recognized Draft layer. The distinct
+`coordinate_draft_version_unsupported` code is a warning, and later exact
+versions are not validated using `0.1.0` rules. Draft validation is read-only
+and does not resolve external definitions or authorize writes.
+
+Support-state codes are warnings. The other codes above are errors. The
+semantic distinctions and offline behavior are documented in
+`docs/specification-interoperability.md`.
+
 ## JSON Pointer rules
 
 Paths use RFC 6901 encoding:

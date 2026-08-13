@@ -9,8 +9,11 @@ forward compatibility with unknown fields and Extensions.
 ## Initial scope
 
 - E2R Core Dataset structure and Dataset-level semantic rules
-- Metadata Extension v1
-- History Extension v1
+- Metadata Extension `1.0.0`
+- History Extension `1.0.0`
+- Specification Extension draft `0.1.0` declarations and dependencies
+- Coordinate interoperability prototype `0.1.0` structure and references
+- Coordinate Extension draft `0.1.0` read-only structure and references
 - stable diagnostic codes, JSON Pointer paths, and related IDs
 - read-only CLI validation
 
@@ -57,6 +60,10 @@ The validator does not edit or repair input Datasets.
 
 The diagnostic contract is defined in `docs/diagnostic-contract.md`.
 Core, Metadata, and History validation are implemented for the initial MVP.
+Unreleased post-MVP work also supports Specification draft `0.1.0`, the
+unregistered Coordinate prototype `0.1.0`, and the distinct Coordinate draft
+`0.1.0`. Implementation support does not make any candidate Stable or
+authorize application writes or automatic migration.
 
 See [`docs/release-process.md`](docs/release-process.md) for the tag-based
 npm publication process and [`CHANGELOG.md`](CHANGELOG.md) for release notes.
