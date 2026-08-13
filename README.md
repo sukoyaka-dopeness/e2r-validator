@@ -60,7 +60,7 @@ The validator does not edit or repair input Datasets.
 
 The diagnostic contract is defined in `docs/diagnostic-contract.md`.
 Core, Metadata, and History validation are implemented for the initial MVP.
-Unreleased post-MVP work also supports Specification draft `0.1.0`, the
+Published version `0.2.0` also supports Specification draft `0.1.0`, the
 unregistered Coordinate prototype `0.1.0`, and the distinct Coordinate draft
 `0.1.0`. Implementation support does not make any candidate Stable or
 authorize application writes or automatic migration.

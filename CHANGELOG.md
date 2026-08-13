@@ -39,6 +39,10 @@ require a version change under the project release policy.
 - The Coordinate Prototype and Draft identities are recognized and validated
   independently; Validator performs no migration between them.
 
+Published successfully from tag `v0.2.0` through npm Trusted Publishing.
+Post-release verification confirmed npm `latest`, clean installation, CLI
+version output, and Coordinate Draft library diagnostics.
+
 ## 0.1.3 - 2026-08-08
 
 The initial Validator MVP was published successfully through GitHub Actions
