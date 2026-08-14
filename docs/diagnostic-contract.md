@@ -223,6 +223,35 @@ These are errors in the recognized Draft layer. The distinct
 versions are not validated using `0.1.0` rules. Draft validation is read-only
 and does not resolve external definitions or authorize writes.
 
+Names Extension draft `0.1.0` codes:
+
+```text
+names_draft_payload_invalid
+names_draft_expressions_missing
+names_draft_expressions_invalid
+names_draft_expression_invalid
+names_draft_expression_id_missing
+names_draft_expression_id_invalid
+names_draft_expression_value_missing
+names_draft_expression_value_invalid
+names_draft_expression_language_invalid
+names_draft_expression_script_invalid
+names_draft_expression_id_duplicate
+```
+
+These codes are errors only when a valid Specification Extension declaration
+selects exact identifier `draft.github.sukoyaka-dopeness.names` at locally
+supported exact version `0.1.0`. Without a usable declaration, the existing
+version-unspecified or unsupported-version behavior applies and Names `0.1.0`
+rules are not interpreted.
+
+Each occurrence of a duplicated recognized Names expression ID receives
+`names_draft_expression_id_duplicate` at its own expression `id` path. These
+diagnostics do not use `relatedIds`. Locally invalid records with string `id`
+and string `value` remain recognized for duplicate detection, so independent
+local and duplicate diagnostics may coexist. Validation is read-only and does
+not merge, rewrite, allocate, delete, normalize, or retarget IDs.
+
 Support-state codes are warnings. The other codes above are errors. The
 semantic distinctions and offline behavior are documented in
 `docs/specification-interoperability.md`.

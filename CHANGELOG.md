@@ -7,6 +7,21 @@ require a version change under the project release policy.
 
 ## Unreleased
 
+## 0.3.0 - 2026-08-14
+
+### Added
+
+- Added declaration-gated read-only support for Names Draft `0.1.0`.
+- Added Names local structural diagnostics and Dataset-wide recognized
+  expression-ID uniqueness diagnostics.
+- Added stable `names_draft_*` diagnostic codes with exact-version activation
+  and version-unspecified/unsupported behavior.
+
+### Changed
+
+- Documented Names Draft validation boundaries, deterministic diagnostics, and
+  the separation from future Stable Names, writers, migration, and repair.
+
 ## 0.2.0 - 2026-08-13
 
 ### Added

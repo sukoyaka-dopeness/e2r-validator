@@ -30,6 +30,7 @@ has severity `error`. Diagnostic namespaces identify the affected layer.
 | `history` | `1.0.0` | none |
 | `experimental.github.sukoyaka-dopeness.coordinate` | `0.1.0` | none |
 | `draft.github.sukoyaka-dopeness.coordinate` | `0.1.0` | none |
+| `draft.github.sukoyaka-dopeness.names` | `0.1.0` | none |
 | `draft.github.sukoyaka-dopeness.specification` | `0.1.0` | bootstrap only |
 
 An exact supported declaration produces no success diagnostic. Success is the
@@ -98,6 +99,13 @@ Coordinate draft `specVersion` is its distinct bootstrap. A valid exact
 absent. A supported Specification payload must declare the Draft identity
 exactly once at the same version. A later syntactically valid Draft version is
 reported as unsupported and is not interpreted with `0.1.0` rules.
+
+Names draft has no in-payload version field and does not bootstrap from payload
+presence. Its local structure and Dataset-wide recognized expression-ID
+uniqueness rules run only when a valid supported Specification declaration
+selects exact identifier `draft.github.sukoyaka-dopeness.names` and exact
+version `0.1.0`. Without a usable declaration it remains version-unspecified;
+an unsupported declared version is not interpreted with `0.1.0` rules.
 
 ## Dependency evaluation
 

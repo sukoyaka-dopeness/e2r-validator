@@ -12,12 +12,18 @@ import {
   SPECIFICATION_EXTENSION_ID,
   validateSpecificationExtension,
 } from "./specification-validator.js";
+import { NAMES_DRAFT_EXTENSION_ID } from "./names-draft-uniqueness-detector.js";
+import {
+  NAMES_DRAFT_VERSION,
+  validateNamesDraftExtension,
+} from "./names-draft-validator.js";
 
 const recognized = new Set([
   "metadata",
   "history",
   COORDINATE_EXTENSION_ID,
   COORDINATE_DRAFT_EXTENSION_ID,
+  NAMES_DRAFT_EXTENSION_ID,
   SPECIFICATION_EXTENSION_ID,
 ]);
 const nonEmpty = (value) => typeof value === "string" && value.trim().length > 0;
@@ -97,6 +103,13 @@ export function validateExtensions(dataset) {
       specification.supported ? specificationPayload : undefined,
       specificationPath,
     ));
+  }
+  const namesDeclaration = specification.declarations.get(NAMES_DRAFT_EXTENSION_ID);
+  if (
+    namesDeclaration?.version === NAMES_DRAFT_VERSION
+    && isLocallySupportedSpecification(NAMES_DRAFT_EXTENSION_ID, namesDeclaration.version)
+  ) {
+    diagnostics.push(...validateNamesDraftExtension(dataset));
   }
   return diagnostics;
 }

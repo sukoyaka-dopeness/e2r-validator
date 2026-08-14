@@ -14,6 +14,8 @@ forward compatibility with unknown fields and Extensions.
 - Specification Extension draft `0.1.0` declarations and dependencies
 - Coordinate interoperability prototype `0.1.0` structure and references
 - Coordinate Extension draft `0.1.0` read-only structure and references
+- Names Extension draft `0.1.0` declaration-gated local structure and
+  Dataset-wide recognized expression-ID uniqueness
 - stable diagnostic codes, JSON Pointer paths, and related IDs
 - read-only CLI validation
 
@@ -62,7 +64,9 @@ The diagnostic contract is defined in `docs/diagnostic-contract.md`.
 Core, Metadata, and History validation are implemented for the initial MVP.
 Published version `0.2.0` also supports Specification draft `0.1.0`, the
 unregistered Coordinate prototype `0.1.0`, and the distinct Coordinate draft
-`0.1.0`. Implementation support does not make any candidate Stable or
+`0.1.0`. The current implementation also supports exact Names draft `0.1.0`
+when selected by a valid exact Specification declaration. Implementation
+support does not make any candidate Stable or
 authorize application writes or automatic migration.
 
 See [`docs/release-process.md`](docs/release-process.md) for the tag-based
