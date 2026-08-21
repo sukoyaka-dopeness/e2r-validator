@@ -1,5 +1,12 @@
 # e2r-validator Development Guidance
 
+## Reusable knowledge
+
+The central workspace knowledge base is `C:\Users\extra\E2R\ai-knowledge`.
+Search its `INDEX.md` before validation-boundary, Extension, Dataset, or
+cross-repository interoperability work. The specification and current tests
+remain authoritative; knowledge entries are scoped supporting evidence.
+
 This repository implements executable validation for the E2R specification.
 The source of truth is the sibling `../e2r-spec` repository.
 
