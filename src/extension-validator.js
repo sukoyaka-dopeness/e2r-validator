@@ -17,6 +17,10 @@ import {
   NAMES_DRAFT_VERSION,
   validateNamesDraftExtension,
 } from "./names-draft-validator.js";
+import {
+  LINEAGE_DRAFT_EXTENSION_ID,
+  validateLineageDraftDataset,
+} from "./lineage-draft-validator.js";
 
 const recognized = new Set([
   "metadata",
@@ -24,6 +28,7 @@ const recognized = new Set([
   COORDINATE_EXTENSION_ID,
   COORDINATE_DRAFT_EXTENSION_ID,
   NAMES_DRAFT_EXTENSION_ID,
+  LINEAGE_DRAFT_EXTENSION_ID,
   SPECIFICATION_EXTENSION_ID,
 ]);
 const nonEmpty = (value) => typeof value === "string" && value.trim().length > 0;
@@ -89,6 +94,10 @@ export function validateExtensions(dataset) {
       validator(occurrence.value, occurrence.path, diagnostics);
     }
   }
+  diagnostics.push(...validateLineageDraftDataset(
+    dataset,
+    occurrences.get(LINEAGE_DRAFT_EXTENSION_ID) ?? [],
+  ));
   const coordinateOccurrences = occurrences.get(COORDINATE_EXTENSION_ID) ?? [];
   if (coordinateOccurrences.length > 0) {
     diagnostics.push(...validateCoordinateExtension(
