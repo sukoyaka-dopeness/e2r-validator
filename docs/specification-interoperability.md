@@ -31,10 +31,20 @@ has severity `error`. Diagnostic namespaces identify the affected layer.
 | `experimental.github.sukoyaka-dopeness.coordinate` | `0.1.0` | none |
 | `draft.github.sukoyaka-dopeness.coordinate` | `0.1.0` | none |
 | `draft.github.sukoyaka-dopeness.names` | `0.1.0` | none |
+| `draft.github.sukoyaka-dopeness.liaisonscape-presentation` | `0.1.0` | none |
 | `draft.github.sukoyaka-dopeness.specification` | `0.1.0` | bootstrap only |
 
 An exact supported declaration produces no success diagnostic. Success is the
 absence of a conformance error or support warning for that declaration.
+
+Presentation payloads carry their own `specVersion`; the exact `0.1.0` value
+selects the implemented Presentation structural validation semantics. Payload
+presence alone is not equivalent to a complete central Specification
+declaration: a warning-free declaration still requires the exact supported
+Presentation entry in `Specification.uses`. Unknown future Presentation
+tokens and fields remain forward-compatible and are preserved, while an
+unsupported Presentation version is not interpreted using `0.1.0` record
+semantics. Presentation validation remains read-only and performs no repair.
 
 ## Severity model
 
