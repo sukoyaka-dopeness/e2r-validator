@@ -22,6 +22,60 @@ test("warns about unknown Extensions without rejecting the Dataset", () => {
   assert.equal(result.diagnostics[0].severity, "warning");
 });
 
+test("validates Presentation values and orphan keys without mutation", () => {
+  const dataset = {
+    ...base,
+    relations: [{ id: "live", sourceId: "a", targetId: "b" }],
+    entities: [{ id: "a" }, { id: "b" }],
+    extensions: {
+      "draft.github.sukoyaka-dopeness.liaisonscape-presentation": {
+        specVersion: "0.1.0",
+        relations: {
+          live: { arrowDisplay: "reverse", lineStyle: "dashed", future: { keep: true } },
+          orphan: { arrowDisplay: "future-token", futureProperty: { keep: true } },
+        },
+      },
+    },
+  };
+  const before = structuredClone(dataset);
+  const result = validateCoreDataset(dataset);
+  assert.equal(result.valid, true);
+  assert.deepEqual(result.diagnostics, [{
+    severity: "warning",
+    code: "presentation_orphan_relation",
+    path: "/extensions/draft.github.sukoyaka-dopeness.liaisonscape-presentation/relations/orphan",
+  }]);
+  assert.deepEqual(dataset, before);
+});
+
+test("separates malformed Presentation records from orphan warnings", () => {
+  const result = validateCoreDataset({
+    ...base,
+    extensions: {
+      "draft.github.sukoyaka-dopeness.liaisonscape-presentation": {
+        specVersion: "0.1.0",
+        relations: { orphan: {} },
+      },
+    },
+  });
+  assert.equal(result.valid, false);
+  assert.equal(result.diagnostics.some(({ code, severity }) => code === "presentation_relation_record_empty" && severity === "error"), true);
+  assert.equal(result.diagnostics.some(({ code, severity }) => code === "presentation_orphan_relation" && severity === "warning"), true);
+});
+
+test("does not inspect unsupported Presentation versions", () => {
+  const result = validateCoreDataset({
+    ...base,
+    extensions: {
+      "draft.github.sukoyaka-dopeness.liaisonscape-presentation": {
+        specVersion: "0.2.0", relations: { orphan: {} },
+      },
+    },
+  });
+  assert.equal(result.valid, true);
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["presentation_version_unsupported"]);
+});
+
 test("recognizes a valid Lineage Draft without an unknown-extension warning", () => {
   const result = validateCoreDataset({
     ...base,

@@ -21,6 +21,10 @@ import {
   LINEAGE_DRAFT_EXTENSION_ID,
   validateLineageDraftDataset,
 } from "./lineage-draft-validator.js";
+import {
+  PRESENTATION_EXTENSION_ID,
+  validatePresentationExtension,
+} from "./presentation-validator.js";
 
 const recognized = new Set([
   "metadata",
@@ -30,6 +34,7 @@ const recognized = new Set([
   NAMES_DRAFT_EXTENSION_ID,
   LINEAGE_DRAFT_EXTENSION_ID,
   SPECIFICATION_EXTENSION_ID,
+  PRESENTATION_EXTENSION_ID,
 ]);
 const nonEmpty = (value) => typeof value === "string" && value.trim().length > 0;
 const isObject = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
@@ -113,6 +118,10 @@ export function validateExtensions(dataset) {
       specificationPath,
     ));
   }
+  diagnostics.push(...validatePresentationExtension(
+    occurrences.get(PRESENTATION_EXTENSION_ID) ?? [],
+    new Set((dataset.relations ?? []).filter(isObject).map((relation) => relation.id).filter(nonEmpty)),
+  ));
   const namesDeclaration = specification.declarations.get(NAMES_DRAFT_EXTENSION_ID);
   if (
     namesDeclaration?.version === NAMES_DRAFT_VERSION
