@@ -16,6 +16,8 @@ forward compatibility with unknown fields and Extensions.
 - Coordinate Extension draft `0.1.0` read-only structure and references
 - Names Extension draft `0.1.0` declaration-gated local structure and
   Dataset-wide recognized expression-ID uniqueness
+- Presentation Extension draft `0.1.0` read-only Relation arrow display,
+  line style, and orphan semantic warnings
 - stable diagnostic codes, JSON Pointer paths, and related IDs
 - read-only CLI validation
 
@@ -56,16 +58,18 @@ The E2R specification repository remains the source of truth:
 
 `../e2r-spec`
 
-The validator does not edit or repair input Datasets.
+The validator does not edit or repair input Datasets. Presentation validation
+is read-only and does not auto-repair Relation records; unknown Presentation
+tokens and fields remain preservable for forward compatibility.
 
 ## Status
 
 The diagnostic contract is defined in `docs/diagnostic-contract.md`.
 Core, Metadata, and History validation are implemented for the initial MVP.
-Published version `0.2.0` also supports Specification draft `0.1.0`, the
+Published version `0.4.0` also supports Specification draft `0.1.0`, the
 unregistered Coordinate prototype `0.1.0`, and the distinct Coordinate draft
-`0.1.0`. The current implementation also supports exact Names draft `0.1.0`
-when selected by a valid exact Specification declaration. Implementation
+`0.1.0`. The current implementation also supports Presentation Draft `0.1.0`
+and exact Names draft `0.1.0` when selected by a valid exact Specification declaration. Implementation
 support does not make any candidate Stable or
 authorize application writes or automatic migration.
 

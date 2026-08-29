@@ -7,6 +7,23 @@ require a version change under the project release policy.
 
 ## Unreleased
 
+## 0.4.0 - 2026-08-30
+
+### Added
+
+- Added read-only Presentation Extension Draft `0.1.0` validation.
+- Added known Relation `arrowDisplay` and `lineStyle` token handling.
+- Added orphan Relation-ID warnings and exact Presentation Specification
+  local support.
+
+### Changed
+
+- Unknown Presentation tokens and fields remain forward-compatible.
+- Unsupported Presentation versions are not validated with `0.1.0` semantics.
+- Presentation records are validated without automatic repair.
+- Exact declared Presentation `0.1.0` no longer incorrectly reports
+  `specification_unavailable`.
+
 ## 0.3.0 - 2026-08-14
 
 ### Added
