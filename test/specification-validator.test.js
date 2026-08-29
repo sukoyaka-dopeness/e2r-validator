@@ -2,12 +2,39 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { validateDataset } from "../src/index.js";
 import { SPECIFICATION_EXTENSION_ID } from "../src/specification-validator.js";
+import { PRESENTATION_EXTENSION_ID, PRESENTATION_VERSION } from "../src/presentation-validator.js";
 
 const base = () => ({ version: "1.0", entities: [], events: [], relations: [] });
 
 function codes(result) {
   return result.diagnostics.map((item) => item.code);
 }
+
+test("supports the exact Presentation declaration and keeps payload bootstrap separate", () => {
+  const presentation = {
+    specVersion: PRESENTATION_VERSION,
+    relations: {},
+  };
+  const declared = validateDataset({
+    ...base(),
+    extensions: {
+      [PRESENTATION_EXTENSION_ID]: presentation,
+      [SPECIFICATION_EXTENSION_ID]: {
+        specVersion: "0.1.0",
+        uses: [{ extension: PRESENTATION_EXTENSION_ID, version: PRESENTATION_VERSION }],
+      },
+    },
+  });
+  assert.equal(declared.valid, true);
+  assert.deepEqual(declared.diagnostics, []);
+
+  const bootstrapOnly = validateDataset({
+    ...base(),
+    extensions: { [PRESENTATION_EXTENSION_ID]: presentation },
+  });
+  assert.equal(bootstrapOnly.valid, true);
+  assert.deepEqual(codes(bootstrapOnly), ["extension_version_unspecified"]);
+});
 
 test("accepts exact locally supported declarations across Dataset and Core Object payloads", () => {
   const dataset = {

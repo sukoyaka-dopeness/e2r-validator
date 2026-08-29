@@ -35,6 +35,10 @@ test("validates Presentation values and orphan keys without mutation", () => {
           orphan: { arrowDisplay: "future-token", futureProperty: { keep: true } },
         },
       },
+      "draft.github.sukoyaka-dopeness.specification": {
+        specVersion: "0.1.0",
+        uses: [{ extension: "draft.github.sukoyaka-dopeness.liaisonscape-presentation", version: "0.1.0" }],
+      },
     },
   };
   const before = structuredClone(dataset);
@@ -56,6 +60,10 @@ test("separates malformed Presentation records from orphan warnings", () => {
         specVersion: "0.1.0",
         relations: { orphan: {} },
       },
+      "draft.github.sukoyaka-dopeness.specification": {
+        specVersion: "0.1.0",
+        uses: [{ extension: "draft.github.sukoyaka-dopeness.liaisonscape-presentation", version: "0.1.0" }],
+      },
     },
   });
   assert.equal(result.valid, false);
@@ -69,6 +77,10 @@ test("does not inspect unsupported Presentation versions", () => {
     extensions: {
       "draft.github.sukoyaka-dopeness.liaisonscape-presentation": {
         specVersion: "0.2.0", relations: { orphan: {} },
+      },
+      "draft.github.sukoyaka-dopeness.specification": {
+        specVersion: "0.1.0",
+        uses: [{ extension: "draft.github.sukoyaka-dopeness.liaisonscape-presentation", version: "0.1.0" }],
       },
     },
   });

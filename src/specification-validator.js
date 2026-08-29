@@ -6,6 +6,7 @@ import {
 } from "./coordinate-draft-validator.js";
 import { NAMES_DRAFT_EXTENSION_ID } from "./names-draft-uniqueness-detector.js";
 import { NAMES_DRAFT_VERSION } from "./names-draft-validator.js";
+import { PRESENTATION_EXTENSION_ID, PRESENTATION_VERSION } from "./presentation-validator.js";
 
 export const SPECIFICATION_EXTENSION_ID = "draft.github.sukoyaka-dopeness.specification";
 export const SPECIFICATION_VERSION = "0.1.0";
@@ -27,6 +28,10 @@ const LOCAL_SUPPORT = new Map([
   }],
   [NAMES_DRAFT_EXTENSION_ID, {
     versions: new Set([NAMES_DRAFT_VERSION]),
+    features: new Set(),
+  }],
+  [PRESENTATION_EXTENSION_ID, {
+    versions: new Set([PRESENTATION_VERSION]),
     features: new Set(),
   }],
 ]);
