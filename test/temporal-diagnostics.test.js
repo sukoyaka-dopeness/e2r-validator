@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { validateCoreDataset } from "../src/core-validator.js";
+import { exitCodeForResult } from "../src/diagnostics.js";
 
 const specification = (uses) => ({
   specVersion: "0.1.0",
@@ -88,6 +89,7 @@ test("reports clearly reversed History 2.0 bounded points as warnings", () => {
   assert.equal(result.valid, true);
   assert.equal(item.severity, "warning");
   assert.equal(item.category, "temporal-conflict");
+  assert.equal(exitCodeForResult(result), 0);
 });
 
 test("skips History comparisons for approximation, partial precision, and mismatched time basis", () => {
@@ -132,6 +134,7 @@ test("reports reversed temporal-extent boundaries without choosing a winner", ()
   const result = validateCoreDataset(value);
   assert.equal(result.valid, true);
   assert.equal(diagnosticFor(result, "history_2_temporal_extent_boundaries_reversed").severity, "warning");
+  assert.equal(diagnosticFor(result, "history_2_temporal_extent_boundaries_reversed").category, "temporal-conflict");
 });
 
 function relativeDataset(relations, features = ["relative-position"]) {
@@ -149,7 +152,9 @@ test("maps Relative Time source/target orientation and reports a direct contradi
   const before = structuredClone(value);
   const result = validateCoreDataset(value);
   assert.equal(result.valid, true);
+  assert.equal(diagnosticFor(result, "temporal_before_conflict").severity, "warning");
   assert.equal(diagnosticFor(result, "temporal_before_conflict").category, "temporal-conflict");
+  assert.equal(exitCodeForResult(result), 0);
   assert.deepEqual(value, before);
 });
 
@@ -163,7 +168,8 @@ test("reports strict cycles and emits only bounded two-edge Derived evidence", (
   value.extensions["draft.github.sukoyaka-dopeness.specification"].uses = [relativeDeclaration(["relative-position"])];
   const result = validateCoreDataset(value);
   assert.equal(result.valid, true);
-  assert.ok(codes(result).includes("temporal_before_cycle"));
+  assert.equal(diagnosticFor(result, "temporal_before_cycle").severity, "warning");
+  assert.equal(diagnosticFor(result, "temporal_before_cycle").category, "temporal-conflict");
   assert.deepEqual(result.derived ?? [], []);
 
   const chain = relativeDataset([
@@ -184,6 +190,17 @@ test("reports strict cycles and emits only bounded two-edge Derived evidence", (
     ],
   }]);
   assert.deepEqual(chain, chainBefore);
+
+  const containmentCycle = relativeDataset([
+    relativeRelation("ab", "b", "a", { type: "containment", relation: "within" }),
+    relativeRelation("bc", "c", "b", { type: "containment", relation: "within" }),
+    relativeRelation("ca", "a", "c", { type: "containment", relation: "within" }),
+  ]);
+  containmentCycle.extensions["draft.github.sukoyaka-dopeness.specification"].uses = [relativeDeclaration(["containment"])];
+  const containmentResult = validateCoreDataset(containmentCycle);
+  assert.equal(containmentResult.valid, true);
+  assert.equal(diagnosticFor(containmentResult, "temporal_within_cycle").severity, "warning");
+  assert.equal(diagnosticFor(containmentResult, "temporal_within_cycle").category, "temporal-conflict");
 });
 
 test("derives two-edge containment without creating a Relation", () => {
@@ -221,6 +238,7 @@ test("preserves unsupported Calendar semantics and does not derive from them", (
   const result = validateCoreDataset(value);
   assert.equal(result.valid, true);
   assert.equal(diagnosticFor(result, "temporal_calendar_unsupported").severity, "warning");
+  assert.equal(diagnosticFor(result, "temporal_calendar_unsupported").category, "unsupported");
   assert.equal(result.derived, undefined);
 });
 

@@ -323,8 +323,10 @@ versions or unknown Features remain uninterpreted. The validator performs only
 bounded, read-only derivation (`before` and `within` two-edge evidence) and
 does not solve, normalize, select a winner, or mutate input.
 
-Support-state codes are warnings. The other codes above are errors. The
-semantic distinctions and offline behavior are documented in
+Support-state codes are warnings. Structural validation codes are errors;
+temporal-conflict codes and unsupported Calendar diagnostics are warnings.
+Derived evidence is not a diagnostic and does not affect `valid`. The semantic
+distinctions and offline behavior are documented in
 `docs/specification-interoperability.md`.
 
 ## JSON Pointer rules
