@@ -9,7 +9,7 @@ export const EXIT_CODES = Object.freeze({
   INPUT_ERROR: 2,
 });
 
-export function diagnostic(severity, code, path, relatedIds) {
+export function diagnostic(severity, code, path, relatedIds, details) {
   if (severity !== SEVERITIES.ERROR && severity !== SEVERITIES.WARNING) {
     throw new TypeError(`Unsupported diagnostic severity: ${severity}`);
   }
@@ -27,18 +27,36 @@ export function diagnostic(severity, code, path, relatedIds) {
     }
     if (relatedIds.length > 0) result.relatedIds = [...relatedIds];
   }
+  if (details !== undefined) {
+    if (typeof details !== "object" || details === null || Array.isArray(details)) {
+      throw new TypeError("Diagnostic details must be an object");
+    }
+    if (details.category !== undefined && typeof details.category !== "string") {
+      throw new TypeError("Diagnostic category must be a string");
+    }
+    if (details.message !== undefined && typeof details.message !== "string") {
+      throw new TypeError("Diagnostic message must be a string");
+    }
+    if (details.category !== undefined) result.category = details.category;
+    if (details.message !== undefined) result.message = details.message;
+  }
   return result;
 }
 
-export function validationResult(diagnostics = []) {
+export function validationResult(diagnostics = [], derived = []) {
   if (!Array.isArray(diagnostics)) {
     throw new TypeError("Diagnostics must be an array");
   }
+  if (!Array.isArray(derived)) {
+    throw new TypeError("Derived evidence must be an array");
+  }
   const normalized = diagnostics.map((item) => ({ ...item }));
-  return {
+  const result = {
     valid: !normalized.some((item) => item.severity === SEVERITIES.ERROR),
     diagnostics: normalized,
   };
+  if (derived.length > 0) result.derived = derived.map((item) => ({ ...item }));
+  return result;
 }
 
 export function exitCodeForResult(result) {

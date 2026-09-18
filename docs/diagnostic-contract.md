@@ -15,9 +15,11 @@ The library returns a result with this shape:
       "severity": "error",
       "code": "relation_source_unresolved",
       "path": "/relations/0/sourceId",
-      "relatedIds": ["missing-event"]
+      "relatedIds": ["missing-event"],
+      "category": "structural"
     }
-  ]
+  ],
+  "derived": []
 }
 ```
 
@@ -32,10 +34,18 @@ Each diagnostic contains:
   identifies the whole document.
 - `relatedIds`: optional Core Object IDs relevant to the diagnostic. It is
   omitted when there are no related IDs.
+- `category`: optional diagnostic layer. Current values are `structural`,
+  `temporal-conflict`, and `unsupported`.
+- `message`: optional human-readable text. It is not a stable machine contract.
+
+When read-only temporal reasoning produces evidence, the result may include a
+`derived` array. Derived entries identify the supported relation and the input
+paths used as premises; they are never written back as Relations or History
+assertions.
 
 Human-readable messages are presentation output and are not part of the stable
-contract. A future localized CLI may add a `message` field without changing
-the meaning of `code` or `path`.
+contract. Consumers must use `code`, `path`, and (when present) `category` for
+machine behavior.
 
 ## Severity rules
 
@@ -251,6 +261,67 @@ diagnostics do not use `relatedIds`. Locally invalid records with string `id`
 and string `value` remain recognized for duplicate detection, so independent
 local and duplicate diagnostics may coexist. Validation is read-only and does
 not merge, rewrite, allocate, delete, normalize, or retarget IDs.
+
+Representative History `2.0.0` candidate and Relative Time draft `0.1.0`
+codes:
+
+```text
+history_2_invalid
+history_2_assertions_invalid
+history_2_assertion_id_invalid
+history_2_assertion_id_duplicate
+history_2_assertion_type_unknown
+history_2_temporal_position_invalid
+history_2_temporal_position_field_invalid
+history_2_temporal_position_precision_gap
+history_2_temporal_position_day_invalid
+history_2_temporal_position_timezone_offset_pair_invalid
+history_2_temporal_position_timezone_precision_invalid
+history_2_temporal_position_timezone_invalid
+history_2_temporal_position_offset_invalid
+history_2_approximation_invalid
+history_2_temporal_order_invalid
+history_2_temporal_order_scope_invalid
+history_2_boundary_invalid
+history_2_boundary_occurrence_invalid
+history_2_boundary_membership_unsupported
+history_2_feature_declaration_mismatch
+history_2_scope_invalid
+history_2_time_and_assertions_conflict
+history_2_position_variant_field_invalid
+history_2_bounded_point_variant_field_invalid
+history_2_bounded_point_bounds_reversed
+history_2_temporal_extent_variant_field_invalid
+history_2_temporal_extent_boundaries_reversed
+relative_time_invalid
+relative_time_type_missing
+relative_time_type_unknown
+relative_time_relation_invalid
+relative_time_containment_invalid
+relative_time_granularity_invalid
+relative_time_displacement_invalid
+relative_time_calendar_invalid
+relative_time_direction_invalid
+relative_time_elapsed_value_invalid
+relative_time_elapsed_unit_invalid
+relative_time_variant_field_invalid
+relative_time_relation_scope_invalid
+relative_time_relation_endpoints_invalid
+relative_time_feature_declaration_mismatch
+temporal_calendar_unsupported
+temporal_before_conflict
+temporal_before_cycle
+temporal_within_cycle
+```
+
+These candidate rules activate only for the exact Specification declarations
+`history` `2.0.0` and
+`draft.github.sukoyaka-dopeness.relative-time` `0.1.0`, with all used Features
+declared. Structural violations are errors. Clearly contradictory temporal
+assertions and unsupported Calendar identifiers are warnings. Unsupported exact
+versions or unknown Features remain uninterpreted. The validator performs only
+bounded, read-only derivation (`before` and `within` two-edge evidence) and
+does not solve, normalize, select a winner, or mutate input.
 
 Support-state codes are warnings. The other codes above are errors. The
 semantic distinctions and offline behavior are documented in

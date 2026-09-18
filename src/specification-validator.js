@@ -8,6 +8,23 @@ import { NAMES_DRAFT_EXTENSION_ID } from "./names-draft-uniqueness-detector.js";
 import { NAMES_DRAFT_VERSION } from "./names-draft-validator.js";
 import { PRESENTATION_EXTENSION_ID, PRESENTATION_VERSION } from "./presentation-validator.js";
 
+export const HISTORY_VERSION = "2.0.0";
+export const RELATIVE_TIME_EXTENSION_ID = "draft.github.sukoyaka-dopeness.relative-time";
+export const RELATIVE_TIME_VERSION = "0.1.0";
+
+const HISTORY_2_FEATURES = new Set([
+  "approximation",
+  "bounded-point",
+  "multiple-assertions",
+  "temporal-extent",
+]);
+const RELATIVE_TIME_FEATURES = new Set([
+  "calendar-granule-relation",
+  "containment",
+  "elapsed-offset",
+  "relative-position",
+]);
+
 export const SPECIFICATION_EXTENSION_ID = "draft.github.sukoyaka-dopeness.specification";
 export const SPECIFICATION_VERSION = "0.1.0";
 
@@ -20,7 +37,16 @@ const EVOLUTION_TYPES = new Set(["supersedes", "splitInto", "mergedFrom"]);
 
 const LOCAL_SUPPORT = new Map([
   ["metadata", { versions: new Set(["1.0.0"]), features: new Set() }],
-  ["history", { versions: new Set(["1.0.0"]), features: new Set() }],
+  ["history", {
+    versions: new Set(["1.0.0", HISTORY_VERSION]),
+    features: new Set(HISTORY_2_FEATURES),
+    featuresByVersion: new Map([["1.0.0", new Set()], [HISTORY_VERSION, HISTORY_2_FEATURES]]),
+  }],
+  [RELATIVE_TIME_EXTENSION_ID, {
+    versions: new Set([RELATIVE_TIME_VERSION]),
+    features: new Set(RELATIVE_TIME_FEATURES),
+    featuresByVersion: new Map([[RELATIVE_TIME_VERSION, RELATIVE_TIME_FEATURES]]),
+  }],
   [COORDINATE_EXTENSION_ID, { versions: new Set([COORDINATE_VERSION]), features: new Set() }],
   [COORDINATE_DRAFT_EXTENSION_ID, {
     versions: new Set([COORDINATE_DRAFT_VERSION]),
@@ -38,6 +64,10 @@ const LOCAL_SUPPORT = new Map([
 
 export function isLocallySupportedSpecification(extension, version) {
   return LOCAL_SUPPORT.get(extension)?.versions.has(version) ?? false;
+}
+
+export function isLocallySupportedFeature(extension, version, feature) {
+  return LOCAL_SUPPORT.get(extension)?.featuresByVersion?.get(version)?.has(feature) ?? false;
 }
 
 function isObject(value) {
@@ -173,9 +203,18 @@ function validateUses(value, path, diagnostics) {
     }
 
     const support = LOCAL_SUPPORT.get(item.extension);
-    if (support?.versions.has(item.version) && support.features.size === 0 && "features" in item) {
-      add(diagnostics, SEVERITIES.ERROR, "specification_features_not_defined", `${itemPath}/features`);
-      itemValid = false;
+    if (support?.versions.has(item.version)) {
+      const supportedFeatures = support.featuresByVersion?.get(item.version) ?? support.features;
+      if (supportedFeatures.size === 0 && "features" in item) {
+        add(diagnostics, SEVERITIES.ERROR, "specification_features_not_defined", `${itemPath}/features`);
+        itemValid = false;
+      } else if ("features" in item) {
+        for (const feature of features) {
+          if (!supportedFeatures.has(feature)) {
+            add(diagnostics, SEVERITIES.WARNING, "specification_feature_unsupported", `${itemPath}/features`);
+          }
+        }
+      }
     }
 
     if (!itemValid) {

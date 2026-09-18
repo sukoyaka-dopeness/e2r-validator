@@ -11,6 +11,10 @@ forward compatibility with unknown fields and Extensions.
 - E2R Core Dataset structure and Dataset-level semantic rules
 - Metadata Extension `1.0.0`
 - History Extension `1.0.0`
+- History Extension `2.0.0` candidate structural validation and bounded
+  temporal diagnostics
+- Relative Time Extension draft `0.1.0` Relation validation and bounded,
+  read-only `before`/`within` diagnostics
 - Specification Extension draft `0.1.0` declarations and dependencies
 - Coordinate interoperability prototype `0.1.0` structure and references
 - Coordinate Extension draft `0.1.0` read-only structure and references
@@ -70,8 +74,11 @@ Published version `0.4.0` also supports Specification draft `0.1.0`, the
 unregistered Coordinate prototype `0.1.0`, and the distinct Coordinate draft
 `0.1.0`. The current implementation also supports Presentation Draft `0.1.0`
 and exact Names draft `0.1.0` when selected by a valid exact Specification declaration. Implementation
-support does not make any candidate Stable or
-authorize application writes or automatic migration.
+support does not make any candidate Stable or authorize application writes or
+automatic migration. Candidate temporal support is exact-version and
+declaration-gated; unsupported versions, Features, and Calendars remain
+uninterpreted. Derived temporal evidence is returned separately and never
+written back into the Dataset.
 
 See [`docs/release-process.md`](docs/release-process.md) for the tag-based
 npm publication process and [`CHANGELOG.md`](CHANGELOG.md) for release notes.

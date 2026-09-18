@@ -9,9 +9,21 @@ import {
 } from "./coordinate-draft-validator.js";
 import {
   isLocallySupportedSpecification,
+  HISTORY_VERSION,
+  RELATIVE_TIME_EXTENSION_ID,
+  RELATIVE_TIME_VERSION,
   SPECIFICATION_EXTENSION_ID,
   validateSpecificationExtension,
 } from "./specification-validator.js";
+import {
+  HISTORY_EXTENSION_ID,
+  collectTemporalDiagnostics,
+  supportedCandidateFeatures,
+  usedHistory2Features,
+  usedRelativeTimeFeatures,
+  validateHistory2Extension,
+  validateRelativeTimeExtension,
+} from "./temporal-diagnostics.js";
 import { NAMES_DRAFT_EXTENSION_ID } from "./names-draft-uniqueness-detector.js";
 import {
   NAMES_DRAFT_VERSION,
@@ -28,7 +40,8 @@ import {
 
 const recognized = new Set([
   "metadata",
-  "history",
+  HISTORY_EXTENSION_ID,
+  RELATIVE_TIME_EXTENSION_ID,
   COORDINATE_EXTENSION_ID,
   COORDINATE_DRAFT_EXTENSION_ID,
   NAMES_DRAFT_EXTENSION_ID,
@@ -92,11 +105,82 @@ export function validateExtensions(dataset) {
   const specification = validateSpecificationExtension(specificationPayload, specificationPath, occurrences);
   diagnostics.push(...specification.diagnostics);
 
-  for (const [name, validator] of [["metadata", validateMetadata], ["history", validateHistory]]) {
+  const historyCandidates = [];
+  const relativeCandidates = [];
+  const historyFeatureCandidates = [];
+  const relativeFeatureCandidates = [];
+  for (const [name, validator] of [["metadata", validateMetadata]]) {
     const declaration = specification.declarations.get(name);
     if (declaration && !isLocallySupportedSpecification(name, declaration.version)) continue;
     for (const occurrence of occurrences.get(name) ?? []) {
       validator(occurrence.value, occurrence.path, diagnostics);
+    }
+  }
+  const historyDeclaration = specification.declarations.get(HISTORY_EXTENSION_ID);
+  if (!historyDeclaration || historyDeclaration.version === "1.0.0") {
+    for (const occurrence of occurrences.get(HISTORY_EXTENSION_ID) ?? []) {
+      validateHistory(occurrence.value, occurrence.path, diagnostics);
+    }
+  } else if (historyDeclaration.version === HISTORY_VERSION
+    && supportedCandidateFeatures(HISTORY_EXTENSION_ID, historyDeclaration.version, historyDeclaration.features)) {
+    for (const occurrence of occurrences.get(HISTORY_EXTENSION_ID) ?? []) {
+      if (occurrence.path.startsWith("/extensions/")) {
+        diagnostics.push(diagnostic(SEVERITIES.ERROR, "history_2_scope_invalid", occurrence.path));
+        continue;
+      }
+      const result = validateHistory2Extension(occurrence.value, occurrence.path, diagnostics);
+      if (result.valid) {
+        const candidate = { assertions: result.assertions };
+        historyCandidates.push(candidate);
+        historyFeatureCandidates.push(candidate);
+      }
+    }
+  }
+  const relativeDeclaration = specification.declarations.get(RELATIVE_TIME_EXTENSION_ID);
+  if (relativeDeclaration?.version === RELATIVE_TIME_VERSION
+    && supportedCandidateFeatures(RELATIVE_TIME_EXTENSION_ID, relativeDeclaration.version, relativeDeclaration.features)) {
+    for (const occurrence of occurrences.get(RELATIVE_TIME_EXTENSION_ID) ?? []) {
+      const result = validateRelativeTimeExtension(occurrence.value, occurrence.path, diagnostics);
+      if (!result.valid) continue;
+      relativeFeatureCandidates.push({ payload: occurrence.value });
+      const match = /^\/relations\/(\d+)\/extensions\//.exec(occurrence.path);
+      if (!match || !Array.isArray(dataset.relations) || !isObject(dataset.relations[Number(match[1])])) {
+        diagnostics.push(diagnostic(SEVERITIES.ERROR, "relative_time_relation_scope_invalid", occurrence.path));
+        continue;
+      }
+      const relation = dataset.relations[Number(match[1])];
+      if (!nonEmpty(relation.sourceId) || !nonEmpty(relation.targetId)) {
+        diagnostics.push(diagnostic(SEVERITIES.ERROR, "relative_time_relation_endpoints_invalid", `${occurrence.path}`));
+        continue;
+      }
+      relativeCandidates.push({
+        payload: occurrence.value,
+        path: occurrence.path,
+        sourceId: relation.sourceId,
+        targetId: relation.targetId,
+      });
+    }
+  }
+  if (historyDeclaration?.version === HISTORY_VERSION
+    && supportedCandidateFeatures(HISTORY_EXTENSION_ID, historyDeclaration.version, historyDeclaration.features)) {
+    const used = usedHistory2Features(historyFeatureCandidates);
+    if (!sameSet(used, historyDeclaration.features)) {
+      diagnostics.push(diagnostic(
+        SEVERITIES.ERROR,
+        "history_2_feature_declaration_mismatch",
+        `${historyDeclaration.path}/features`,
+      ));
+    }
+  }
+  if (relativeDeclaration?.version === RELATIVE_TIME_VERSION
+    && supportedCandidateFeatures(RELATIVE_TIME_EXTENSION_ID, relativeDeclaration.version, relativeDeclaration.features)) {
+    const used = usedRelativeTimeFeatures(relativeFeatureCandidates);
+    if (!sameSet(used, relativeDeclaration.features)) {
+      diagnostics.push(diagnostic(
+        SEVERITIES.ERROR,
+        "relative_time_feature_declaration_mismatch",
+        `${relativeDeclaration.path}/features`,
+      ));
     }
   }
   diagnostics.push(...validateLineageDraftDataset(
@@ -129,7 +213,15 @@ export function validateExtensions(dataset) {
   ) {
     diagnostics.push(...validateNamesDraftExtension(dataset));
   }
+  const temporal = collectTemporalDiagnostics({ historyCandidates, relativeCandidates });
+  diagnostics.push(...temporal.diagnostics);
+  diagnostics.derived = temporal.derived;
   return diagnostics;
+}
+
+function sameSet(left, right) {
+  if (left.size !== right.size) return false;
+  return [...left].every((item) => right.has(item));
 }
 
 function validateMetadata(value, base, diagnostics) {

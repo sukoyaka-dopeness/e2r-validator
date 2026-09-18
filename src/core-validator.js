@@ -94,6 +94,7 @@ export function validateCoreDataset(value) {
       }
     }
   }
-  diagnostics.push(...validateExtensions(value));
-  return validationResult(diagnostics);
+  const extensionDiagnostics = validateExtensions(value);
+  diagnostics.push(...extensionDiagnostics);
+  return validationResult(diagnostics, extensionDiagnostics.derived ?? []);
 }
