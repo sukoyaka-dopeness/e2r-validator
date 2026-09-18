@@ -7,6 +7,23 @@ require a version change under the project release policy.
 
 ## Unreleased
 
+### Added
+
+- Added exact-version, declaration-gated read-only validation for the History
+  `2.0.0` candidate and Relative Time draft `0.1.0`.
+- Added bounded temporal diagnostics and separate Derived evidence without
+  mutating input Datasets.
+
+### Changed
+
+- Documented the distinction between structural errors, temporal-conflict or
+  unsupported warnings, and Derived evidence.
+
+These changes are unreleased. They do not promote either candidate to Stable,
+authorize application writers or migration, or determine the next package
+version. A release requires the normal version/changelog/package-inspection
+checkpoint and explicit release authorization.
+
 ## 0.4.0 - 2026-08-30
 
 ### Added
