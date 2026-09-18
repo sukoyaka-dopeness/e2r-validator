@@ -73,14 +73,15 @@ Core, Metadata, and History validation are implemented for the initial MVP.
 Published version `0.4.0` also supports Specification draft `0.1.0`, the
 unregistered Coordinate prototype `0.1.0`, and the distinct Coordinate draft
 `0.1.0`, Presentation Draft `0.1.0`, and exact Names draft `0.1.0`.
-The current unreleased implementation additionally supports the History
+The current package source additionally supports the History
 `2.0.0` candidate and Relative Time draft `0.1.0` with exact-version,
 declaration-gated, read-only structural and bounded temporal diagnostics.
 Candidate support does not make any candidate Stable or authorize application
 writes or automatic migration. Unsupported versions, Features, and Calendars
 remain uninterpreted. Derived temporal evidence is returned separately and
-never written back into the Dataset. The current unreleased implementation is
-not the published `0.4.0` package until a versioned release completes.
+never written back into the Dataset. The current package source version is
+`0.5.0`; the latest published package remains `0.4.0` until publication of
+this prepared release.
 
 See [`docs/release-process.md`](docs/release-process.md) for the tag-based
 npm publication process and [`CHANGELOG.md`](CHANGELOG.md) for release notes.

@@ -28,6 +28,8 @@ has severity `error`. Diagnostic namespaces identify the affected layer.
 | --- | --- | --- |
 | `metadata` | `1.0.0` | none |
 | `history` | `1.0.0` | none |
+| `history` | `2.0.0` candidate | `position`, `bounded-point`, `temporal-extent`, `multiple-assertions`, `approximation` |
+| `draft.github.sukoyaka-dopeness.relative-time` | `0.1.0` draft | `relative-position`, `containment`, `calendar-granule-relation`, `elapsed-offset` |
 | `experimental.github.sukoyaka-dopeness.coordinate` | `0.1.0` | none |
 | `draft.github.sukoyaka-dopeness.coordinate` | `0.1.0` | none |
 | `draft.github.sukoyaka-dopeness.names` | `0.1.0` | none |
@@ -36,6 +38,10 @@ has severity `error`. Diagnostic namespaces identify the affected layer.
 
 An exact supported declaration produces no success diagnostic. Success is the
 absence of a conformance error or support warning for that declaration.
+
+History `2.0.0` and Relative Time `0.1.0` support is read-only and exact-version
+gated. It does not register either candidate as Stable, create Relations,
+write History assertions, migrate Datasets, or persist Derived evidence.
 
 Presentation payloads carry their own `specVersion`; the exact `0.1.0` value
 selects the implemented Presentation structural validation semantics. Payload

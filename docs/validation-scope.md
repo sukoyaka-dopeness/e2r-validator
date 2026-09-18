@@ -1,11 +1,12 @@
 # Validation Scope
 
-The implementation targets Core 1.0, Metadata Extension `1.0.0`, History
-Extension `1.0.0`, Specification Extension draft `0.1.0`, and Coordinate
-interoperability prototype `0.1.0`. It also has read-only support for the
-distinct Coordinate Extension draft `0.1.0`. JSON syntax, structural
-constraints, Extension conformance, and local implementation support are
-separate validation layers.
+The implementation targets Core 1.0, Metadata Extension `1.0.0`, and stable
+History Extension `1.0.0`. It also provides exact-version, declaration-gated,
+read-only support for the History `2.0.0` candidate and Relative Time draft
+`0.1.0`, plus Specification Extension draft `0.1.0`, Coordinate
+interoperability prototype `0.1.0`, and the distinct Coordinate Extension
+draft `0.1.0`. JSON syntax, structural constraints, Extension conformance,
+and local implementation support are separate validation layers.
 
 It also has read-only support for Names Extension draft `0.1.0` at exact
 identifier `draft.github.sukoyaka-dopeness.names`. Names support activates only
@@ -37,3 +38,10 @@ IDs with Core or other Extension IDs, infer equivalence from equal values, or
 perform repair, normalization, migration, or application writes. Support for
 this authority-qualified Draft does not imply support for a future Stable
 `names` Extension.
+
+History `2.0.0` candidate validation and Relative Time draft `0.1.0`
+validation are exact-version and declaration-gated. Structural violations are
+errors; temporal conflicts and unsupported Calendar semantics are warnings.
+Bounded Derived temporal evidence is returned separately and is never written
+back into the Dataset. Candidate/Draft support does not promote Stable
+registration, authorize writers, or authorize migration.

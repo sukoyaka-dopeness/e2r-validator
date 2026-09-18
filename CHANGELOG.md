@@ -5,7 +5,7 @@ All notable changes to `@sukoyaka-dopeness/e2r-validator` are documented here.
 The package follows Semantic Versioning. Documentation-only changes do not
 require a version change under the project release policy.
 
-## Unreleased
+## 0.5.0 - 2026-09-19
 
 ### Added
 
@@ -19,10 +19,9 @@ require a version change under the project release policy.
 - Documented the distinction between structural errors, temporal-conflict or
   unsupported warnings, and Derived evidence.
 
-These changes are unreleased. They do not promote either candidate to Stable,
-authorize application writers or migration, or determine the next package
-version. A release requires the normal version/changelog/package-inspection
-checkpoint and explicit release authorization.
+This package release supports the candidate and draft exactly as declared. It
+does not promote either candidate to Stable or authorize application writers
+or migration. Publication remains a separate release action.
 
 ## 0.4.0 - 2026-08-30
 
